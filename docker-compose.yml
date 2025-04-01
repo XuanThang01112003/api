@@ -1,0 +1,39 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "12345678"   # Mật khẩu root
+      MYSQL_DATABASE: "shop"            # Database mặc định
+      MYSQL_USER: "user"                 # Tạo user mới
+      MYSQL_PASSWORD: "12345678"         # Mật khẩu của user
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql    # Lưu trữ dữ liệu MySQL
+    networks:
+      - clothes-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clothes
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    networks:
+      - clothes-network
+
+volumes:
+  mysql_data:
+
+networks:
+  clothes-network:
+    driver: bridge
+

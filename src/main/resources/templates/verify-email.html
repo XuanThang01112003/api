@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Email Confirmation</title>
+</head>
+<body>
+<!-- Hiển thị tiêu đề -->
+<h1 th:text="${title}">Tiêu đề Email</h1>
+
+<!-- Hiển thị thời gian hết hạn dưới định dạng ngày tháng năm giờ phút -->
+<p>Thời gian hết hạn:
+    <span th:text="${#dates.format(expiryTime, 'dd/MM/yyyy HH:mm')}">dd/MM/yyyy HH:mm</span>
+</p>
+
+<!-- Nút xác nhận với URL từ bên ngoài -->
+<a th:href="${verificationLink}" id="verifyBtn">Xác nhận Email</a>
+</body>
+</html>
