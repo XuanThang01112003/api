@@ -2,7 +2,6 @@ services:
   mysql:
     image: mysql:8.0
     container_name: sql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "12345678"   # Mật khẩu root
       MYSQL_DATABASE: "shop"            # Database mặc định

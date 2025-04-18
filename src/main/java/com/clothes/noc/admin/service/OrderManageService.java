@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -49,20 +50,36 @@ public class OrderManageService {
         SummaryResponse response = SummaryResponse.builder().build();
         response.setData(new ArrayList<>());
         if (SummaryType.DAY.equals(option)) {
-            List<String> labels = IntStream.rangeClosed(0, 23)
-                    .mapToObj(String::valueOf)
-                    .toList();
-            response.setLabels(labels);
-            for (int i = 0; i < num; i++) {
-                int[] data = new int[24];
-                LocalDate date = LocalDate.now().minusDays(i);
-                orderRepository.summaryByDay(date).forEach(o -> {
-                    int hour = (int) o[0];         // Lấy giờ từ kết quả query
-                    int total = ((BigDecimal) o[1]).intValue(); // Lấy tổng từ kết quả query
-                    data[hour] = total;  // Đưa tổng vào vị trí tương ứng với giờ
-                });
-                response.getData().add(Map.of(String.format("%d-%d-%d", date.getDayOfYear(), date.getMonthValue(), date.getYear()), Arrays.stream(data).boxed().toList()));
-            }
+           List<String> labels = IntStream.rangeClosed(0, 23)
+        .mapToObj(String::valueOf)
+        .toList();
+response.setLabels(labels);
+
+for (int i = 0; i < num; i++) {
+    int[] data = new int[24];
+    LocalDate date = LocalDate.now().minusDays(i);
+
+    System.out.println("📅 Đang xử lý ngày: " + date);
+
+    List<Object[]> summary = orderRepository.summaryByDay(date);
+    System.out.println("📊 Dữ liệu từ DB:");
+    summary.forEach(o -> {
+        System.out.println("  ➤ Giờ: " + o[0] + ", Tổng: " + o[1]);
+    });
+
+    summary.forEach(o -> {
+        int hour = (int) o[0];
+        int total = ((BigDecimal) o[1]).intValue();
+        data[hour] = total;
+    });
+
+    String key = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    System.out.println("✅ Thêm vào response với key 2.: " + key);
+    System.out.println("📈 Dữ liệu theo giờ: " + Arrays.toString(data));
+
+    response.getData().add(Map.of(key, Arrays.stream(data).boxed().toList()));
+}
+
         } else if (SummaryType.WEEK.equals(option)) {
             List<String> labels = Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
             LocalDate date = LocalDate.now();
