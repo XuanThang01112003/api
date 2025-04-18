@@ -3,10 +3,12 @@ package com.clothes.noc.admin.controller;
 import com.clothes.noc.admin.service.OrderManageService;
 import com.clothes.noc.dto.request.SearchOrderRequest;
 import com.clothes.noc.dto.response.ApiResponse;
+import com.clothes.noc.dto.response.OrderCountSummaryResponse;
 import com.clothes.noc.dto.response.OrderWithUserResponse;
 import com.clothes.noc.dto.response.SummaryResponse;
 import com.clothes.noc.enums.OrderStatus;
 import com.clothes.noc.enums.SummaryType;
+import com.cloudinary.Api;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +24,13 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize(value = "hasAnyAuthority('ADMIN')")
 public class OrderManageController {
     final OrderManageService orderManageService;
+
+    @GetMapping("/order-count-summary")
+    public ApiResponse<OrderCountSummaryResponse> getOrderCountSummary() {
+        return ApiResponse.<OrderCountSummaryResponse>builder()
+                .body(orderManageService.generateCountSummary())
+                .build();
+    }
 
     @GetMapping("/search")
     ApiResponse<Page<OrderWithUserResponse>> search(SearchOrderRequest request, Pageable pageable) {

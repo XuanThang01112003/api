@@ -1,6 +1,7 @@
 package com.clothes.noc.admin.service;
 
 import com.clothes.noc.dto.request.SearchOrderRequest;
+import com.clothes.noc.dto.response.OrderCountSummaryResponse;
 import com.clothes.noc.dto.response.OrderWithUserResponse;
 import com.clothes.noc.dto.response.SummaryResponse;
 import com.clothes.noc.entity.Order;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -182,4 +184,14 @@ for (int i = 0; i < num; i++) {
         }
     }
 
+    public OrderCountSummaryResponse generateCountSummary() {
+        return OrderCountSummaryResponse.builder()
+                .orderCount(orderRepository.getTotalOrders())
+                .thisWeekOrderCount(orderRepository.getThisWeekOrders(LocalDate.now()
+                        .with(DayOfWeek.MONDAY)
+                        .atStartOfDay()))
+                .totalAmount(orderRepository.getTotalRevenue())
+                .build();
+
+    }
 }

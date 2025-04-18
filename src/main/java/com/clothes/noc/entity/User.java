@@ -55,4 +55,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @ToString.Exclude
     List<Order> orders;
+
+    @Builder.Default
+    LocalDateTime createdAt = LocalDateTime.now();
 }

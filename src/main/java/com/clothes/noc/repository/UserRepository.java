@@ -4,8 +4,10 @@ import com.clothes.noc.enums.Platform;
 import com.clothes.noc.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<String> getRoleById(String id);
     @Query("SELECT u.id FROM User u WHERE u.email=?1 AND u.platform=?2")
     Optional<String> getIdByEmailAndPlatform(String email, Platform platform);
+    @Query("SELECT COUNT(u.id) FROM User u WHERE u.createdAt >= :startOfWeek")
+    Long getThisWeekUserCount(@Param("startOfWeek") LocalDateTime startOfWeek);
 }
